@@ -15,7 +15,7 @@
     <ManifestCertificateThumbprint>C44E44418EBA8B5CB1471930A544522E0B56DDCB</ManifestCertificateThumbprint>
     <ManifestKeyFile>NetCheatPS3_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <ApplicationIcon>NetCheat.ico</ApplicationIcon>
     <FileUpgradeFlags>

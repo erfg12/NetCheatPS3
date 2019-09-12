@@ -184,62 +184,70 @@ namespace NetCheatPS3
 
         #region NetCheat Updater
 
-        public void RunUpdateChecker(bool allowForce)
+        public bool RunUpdateChecker(bool allowForce)
         {
-            string[] updateStr = CheckForUpdate();
-            string newVer = updateStr[0].Replace("\r", "").Replace("\n", "");
-            bool update = int.Parse(newVer.Replace(".", "")) > int.Parse(versionNum.Replace(".", ""));
-            string title = update ?
-                "NetCheat PS3 Version " + newVer + " is available for download.\nWould you like to update and restart NetCheat?" :
-                "NetCheat is up-to-date! Would you like to Force Update?";
-            string updateArg = "";
-            if (updateStr.Length > 1)
-                updateArg = String.Join(Environment.NewLine, updateStr);
-            else
-                updateArg = "";
-
-            //string title = update ? "Update Available" : "Force Update?";
-
-            bool allow = false;
-            if (allowForce || update)
+            try
             {
-                updateForm mBox = new updateForm();
-                mBox.Title = title;
-                mBox.UpdateStr = updateArg;
-                mBox.ForeColor = ForeColor;
-                mBox.BackColor = BackColor;
-                mBox.Show();
+                string[] updateStr = CheckForUpdate();
+                string newVer = updateStr[0].Replace("\r", "").Replace("\n", "");
+                bool update = int.Parse(newVer.Replace(".", "")) > int.Parse(versionNum.Replace(".", ""));
+                string title = update ?
+                    "NetCheat PS3 Version " + newVer + " is available for download.\nWould you like to update and restart NetCheat?" :
+                    "NetCheat is up-to-date! Would you like to Force Update?";
+                string updateArg = "";
+                if (updateStr.Length > 1)
+                    updateArg = String.Join(Environment.NewLine, updateStr);
+                else
+                    updateArg = "";
 
-                while (mBox.Return < 0)
+                //string title = update ? "Update Available" : "Force Update?";
+
+                bool allow = false;
+                if (allowForce || update)
+                {
+                    updateForm mBox = new updateForm();
+                    mBox.Title = title;
+                    mBox.UpdateStr = updateArg;
+                    mBox.ForeColor = ForeColor;
+                    mBox.BackColor = BackColor;
+                    mBox.Show();
+
+                    while (mBox.Return < 0)
+                        Application.DoEvents();
+                    allow = (mBox.Return == 0) ? false : true;
+                    mBox.Close();
+                }
+
+                if (allow)
+                {
+
+                    Form loadingFrm = new Form();
+                    loadingFrm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+                    loadingFrm.ControlBox = false;
+                    loadingFrm.Size = new System.Drawing.Size(200, 75);
+                    Label lbl = new Label();
+                    lbl.Text = "Updating NetCheat PS3...";
+                    lbl.AutoSize = false;
+                    lbl.Size = loadingFrm.Size;
+                    lbl.Location = new Point(0, 0);
+                    lbl.TextAlign = ContentAlignment.MiddleCenter;
+                    lbl.Font = new System.Drawing.Font(this.Font.FontFamily, 15.0f);
+                    loadingFrm.Controls.Add(lbl);
+                    loadingFrm.BackColor = BackColor;
+                    loadingFrm.ForeColor = ForeColor;
+                    loadingFrm.Show();
+                    loadingFrm.TopLevel = true;
+                    loadingFrm.Location = new Point(Screen.PrimaryScreen.WorkingArea.Width / 2 - (loadingFrm.Width / 2),
+                        Screen.PrimaryScreen.WorkingArea.Height / 2 - (loadingFrm.Height / 2));
                     Application.DoEvents();
-                allow = (mBox.Return == 0) ? false : true;
-                mBox.Close();
+
+                    UpdateNetCheatPS3();
+                }
+                return true;
             }
-
-            if (allow)
+            catch
             {
-
-                Form loadingFrm = new Form();
-                loadingFrm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-                loadingFrm.ControlBox = false;
-                loadingFrm.Size = new System.Drawing.Size(200, 75);
-                Label lbl = new Label();
-                lbl.Text = "Updating NetCheat PS3...";
-                lbl.AutoSize = false;
-                lbl.Size = loadingFrm.Size;
-                lbl.Location = new Point(0, 0);
-                lbl.TextAlign = ContentAlignment.MiddleCenter;
-                lbl.Font = new System.Drawing.Font(this.Font.FontFamily, 15.0f);
-                loadingFrm.Controls.Add(lbl);
-                loadingFrm.BackColor = BackColor;
-                loadingFrm.ForeColor = ForeColor;
-                loadingFrm.Show();
-                loadingFrm.TopLevel = true;
-                loadingFrm.Location = new Point(Screen.PrimaryScreen.WorkingArea.Width / 2 - (loadingFrm.Width / 2),
-                    Screen.PrimaryScreen.WorkingArea.Height / 2 - (loadingFrm.Height / 2));
-                Application.DoEvents();
-
-                UpdateNetCheatPS3();
+                return false;
             }
         }
 
@@ -316,7 +324,6 @@ namespace NetCheatPS3
         public Form1()
         {
             InitializeComponent();
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_Closing);
 
             /* Related to the keybindings */
             connectButton.KeyUp += new KeyEventHandler(Form1_KeyUp);
@@ -371,28 +378,10 @@ namespace NetCheatPS3
             }
         }
 
-        /* Everything else because I have no organization skills... */
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            ConstantLoop = 2;
-            PS3.DisconnectTarget();
-            this.statusLabel1.Text = "Disconnected";
-            System.IO.File.Delete(dFileName);
-
-            //Close all plugins
-            foreach (PluginForm a in pluginForm)
-            {
-                a.Dispose();
-                a.Close();
-            }
-
-            if (refPlugin.Text == "Close Plugins")
-                Global.Plugins.ClosePlugins();
-        }
-
         private void Main_Load(object sender, EventArgs e)
         {
-            RunUpdateChecker(false);
+            if (!RunUpdateChecker(false))
+                Debug.WriteLine("update failed");
             //if (File.Exists(Application.ExecutablePath + ".bak"))
             //    File.Delete(Application.ExecutablePath + ".bak");
             //if (File.Exists(Application.StartupPath + "\\updateNC.bat"))
@@ -403,9 +392,9 @@ namespace NetCheatPS3
             int x = 0;
             //Set the settings file and load the settings
             settFile = Application.StartupPath + "\\ncps3.ini";
-            if (System.IO.File.Exists(settFile))
+            if (File.Exists(settFile))
             {
-                string[] settLines = System.IO.File.ReadAllLines(settFile);
+                string[] settLines = File.ReadAllLines(settFile);
                 try
                 {
                     //Read the keybinds from the array
@@ -435,12 +424,17 @@ namespace NetCheatPS3
                 }
                 catch
                 {
+                    Debug.WriteLine("Reading file crashed: " + Application.StartupPath + "\\ncps3.ini");
                 }
             }
+            else
+                Debug.WriteLine("File missing: " + Application.StartupPath + "\\ncps3.ini");
 
             PS3.ChangeAPI((apiDLL == 0) ? SelectAPI.TargetManager : SelectAPI.ControlConsole);
-            if (apiDLL == 0)
-                PS3.PS3TMAPI_NET();
+            if (apiDLL == 0) {
+                if (File.Exists(Application.StartupPath + @"\ps3tmapi_net.dll"))
+                    PS3.PS3TMAPI_NET(); // erfg12: This causes a crazy amount of error reports if the dll file doesn't exist.
+            }
             else
             {
                 SchPWS.Visible = false; //Can't stop/continue process with CCAPI
@@ -448,70 +442,7 @@ namespace NetCheatPS3
                 startGameButt.Visible = false;
             }
 
-            refPlugin_Click(null, null);
-
-            attachProcessButton.Enabled = false;
-
-            //Add the first Code
-            cbList.Items.Add("NEW CODE");
-            //Set backcolor
-            cbList.Items[0].ForeColor = ncForeColor;
-            cbList.Items[0].BackColor = ncBackColor;
-
-            Codes[CodesCount].name = "NEW CODE";
-            Codes[CodesCount].state = false;
-            cbSchAlign.SelectedIndex = 2;
-            compBox.SelectedIndex = 0;
-            dFileName = Application.StartupPath + "\\dump.txt";
-
-            cbList.Items[0].Selected = true;
-            cbList.Items[0].Selected = false;
-
-            //Add first range
-            string[] a = { "00000000", "FFFFFFFC" };
-            ListViewItem b = new ListViewItem(a);
-            rangeView.Items.Add(b);
-
-            //Update range array
-            UpdateMemArray();
-
-            //Update all the controls on the form
-            int ctrl = 0;
-            for (ctrl = 0; ctrl < Controls.Count; ctrl++)
-            {
-                Controls[ctrl].BackColor = ncBackColor;
-                Controls[ctrl].ForeColor = ncForeColor;
-            }
-
-            //Update all the controls on the tabs
-            for (ctrl = 0; ctrl < TabCon.TabPages.Count; ctrl++)
-            {
-                TabCon.TabPages[ctrl].BackColor = ncBackColor;
-                TabCon.TabPages[ctrl].ForeColor = ncForeColor;
-                //Color each control in the tab too
-                for (int tabCtrl = 0; tabCtrl < TabCon.TabPages[ctrl].Controls.Count; tabCtrl++)
-                {
-                    TabCon.TabPages[ctrl].Controls[tabCtrl].BackColor = ncBackColor;
-                    TabCon.TabPages[ctrl].Controls[tabCtrl].ForeColor = ncForeColor;
-                }
-            }
-
-            
-
-            toolStripDropDownButton1.BackColor = Color.Maroon;
-
-            try
-            {
-                sRecognize.RequestRecognizerUpdate();
-                DictationGrammar _dictationGrammar = new DictationGrammar();
-                sRecognize.LoadGrammar(_dictationGrammar);
-                sRecognize.SpeechRecognized += sr_SpeechRecognized;
-                sRecognize.SetInputToDefaultAudioDevice();
-            }
-            catch
-            {
-                return;
-            }
+            // erfg12: manipulate UI elements in _shown event, not _load.
         }
 
         /* Connects to PS3 */
@@ -2773,7 +2704,8 @@ namespace NetCheatPS3
 
         private void updateStripMenuItem1_Click(object sender, EventArgs e)
         {
-            RunUpdateChecker(true);
+            if (!RunUpdateChecker(true))
+                MessageBox.Show("update failed");
         }
 
         private void gameStatusStripMenuItem1_Click(object sender, EventArgs e)
@@ -3077,5 +3009,97 @@ namespace NetCheatPS3
                 startGameButt.ForeColor = Color.FromArgb(0, 130, 210);
         }
 
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            refPlugin_Click(null, null);
+
+            attachProcessButton.Enabled = false;
+
+            //Add the first Code
+            cbList.Items.Add("NEW CODE");
+            //Set backcolor
+            cbList.Items[0].ForeColor = ncForeColor;
+            cbList.Items[0].BackColor = ncBackColor;
+
+            Codes[CodesCount].name = "NEW CODE";
+            Codes[CodesCount].state = false;
+            cbSchAlign.SelectedIndex = 2;
+            compBox.SelectedIndex = 0;
+            dFileName = Application.StartupPath + "\\dump.txt";
+
+            cbList.Items[0].Selected = true;
+            cbList.Items[0].Selected = false;
+
+            //Add first range
+            string[] a = { "00000000", "FFFFFFFC" };
+            ListViewItem b = new ListViewItem(a);
+            rangeView.Items.Add(b);
+
+            //Update range array
+            UpdateMemArray();
+
+            //Update all the controls on the form
+            int ctrl = 0;
+            for (ctrl = 0; ctrl < Controls.Count; ctrl++)
+            {
+                Controls[ctrl].BackColor = ncBackColor;
+                Controls[ctrl].ForeColor = ncForeColor;
+            }
+
+            //Update all the controls on the tabs
+            for (ctrl = 0; ctrl < TabCon.TabPages.Count; ctrl++)
+            {
+                TabCon.TabPages[ctrl].BackColor = ncBackColor;
+                TabCon.TabPages[ctrl].ForeColor = ncForeColor;
+                //Color each control in the tab too
+                for (int tabCtrl = 0; tabCtrl < TabCon.TabPages[ctrl].Controls.Count; tabCtrl++)
+                {
+                    TabCon.TabPages[ctrl].Controls[tabCtrl].BackColor = ncBackColor;
+                    TabCon.TabPages[ctrl].Controls[tabCtrl].ForeColor = ncForeColor;
+                }
+            }
+
+
+
+            toolStripDropDownButton1.BackColor = Color.Maroon;
+
+            try
+            {
+                sRecognize.RequestRecognizerUpdate();
+                DictationGrammar _dictationGrammar = new DictationGrammar();
+                sRecognize.LoadGrammar(_dictationGrammar);
+                sRecognize.SpeechRecognized += sr_SpeechRecognized;
+                sRecognize.SetInputToDefaultAudioDevice();
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ConstantLoop = 2;
+            try
+            {
+                PS3.DisconnectTarget();
+            } catch
+            {
+                Debug.WriteLine("Caught PS3 Disconnect Target crash.");
+            }
+            statusLabel1.Text = "Disconnected";
+            if (File.Exists(dFileName))
+                File.Delete(dFileName);
+
+            //Close all plugins
+            foreach (PluginForm a in pluginForm)
+            {
+                a.Dispose();
+                a.Close();
+            }
+
+            if (refPlugin.Text == "Close Plugins")
+                Global.Plugins.ClosePlugins();
+        }
     }
 }

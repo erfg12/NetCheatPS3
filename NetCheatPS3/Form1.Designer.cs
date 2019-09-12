@@ -657,6 +657,7 @@
             this.colFileName});
             this.recRangeBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(130)))), ((int)(((byte)(210)))));
             this.recRangeBox.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.recRangeBox.HideSelection = false;
             this.recRangeBox.LabelWrap = false;
             this.recRangeBox.Location = new System.Drawing.Point(235, 85);
             this.recRangeBox.MultiSelect = false;
@@ -944,7 +945,7 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton1,
             this.statusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 441);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 440);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(485, 22);
             this.statusStrip1.TabIndex = 9;
@@ -1024,28 +1025,28 @@
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // refreshFromPS3ToolStripMenuItem
             // 
             this.refreshFromPS3ToolStripMenuItem.Name = "refreshFromPS3ToolStripMenuItem";
-            this.refreshFromPS3ToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.refreshFromPS3ToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.refreshFromPS3ToolStripMenuItem.Text = "Refresh From PS3";
             this.refreshFromPS3ToolStripMenuItem.Click += new System.EventHandler(this.refreshFromPS3ToolStripMenuItem_Click);
             // 
             // refreshFromDumptxtToolStripMenuItem
             // 
             this.refreshFromDumptxtToolStripMenuItem.Name = "refreshFromDumptxtToolStripMenuItem";
-            this.refreshFromDumptxtToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.refreshFromDumptxtToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.refreshFromDumptxtToolStripMenuItem.Text = "Refresh From dump.txt";
             this.refreshFromDumptxtToolStripMenuItem.Click += new System.EventHandler(this.refreshFromDumptxtToolStripMenuItem_Click);
             // 
@@ -1057,7 +1058,7 @@
             this.refreshFromPS3ToolStripMenuItem,
             this.refreshFromDumptxtToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(197, 92);
             // 
             // pauseGameButt
             // 
@@ -1091,7 +1092,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(485, 463);
+            this.ClientSize = new System.Drawing.Size(485, 462);
             this.Controls.Add(this.startGameButt);
             this.Controls.Add(this.pauseGameButt);
             this.Controls.Add(this.optButton);
@@ -1107,7 +1108,9 @@
             this.MinimumSize = new System.Drawing.Size(501, 501);
             this.Name = "Form1";
             this.Text = "NetCheat PS3 by Dnawrkshp";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Main_Load);
+            this.Shown += new System.EventHandler(this.Form1_Shown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.TabCon.ResumeLayout(false);
