@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NetCheatPS3.exe" size="1768448">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NetCheatPS3.exe" size="1772544">
       <assemblyIdentity name="NetCheatPS3" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>cOrk0S0dC17URYCQpSOX/fXM3wUm63u1gX1gzvzW5tc=</dsig:DigestValue>
+        <dsig:DigestValue>8RCMjg10iaWOBkoM/urxihxUNsvQbo+tZDzBRuBZ1u8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -67,14 +67,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PS3Lib.dll" size="34304">
-      <assemblyIdentity name="PS3Lib" version="4.1.1.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PS3Lib.dll" size="71680">
+      <assemblyIdentity name="PS3Lib" version="4.5.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>6uPKG3LyaR40snnLU9eiAt/0PbTkE5/23lZtLzCBfkc=</dsig:DigestValue>
+        <dsig:DigestValue>Hj8WRODfgQn8A/xggrDtXiQ+WCZYzsHmE+5SZ2VcHA8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -87,13 +87,13 @@
       <dsig:DigestValue>VwN/D0lk3XuqrDI9z55NPTQR5kfDppts7EVa4O3Hy5U=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="NetCheatPS3.exe.config" size="144">
+  <file name="NetCheatPS3.exe.config" size="861">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>jLCHdLm7v47ACsSCc72IOp8bA051ZvlIJCmYB91hk5o=</dsig:DigestValue>
+      <dsig:DigestValue>f9BIpneMrAAmo+6/Ic9nS0UoeeGJAt8zfG0lYkvsB58=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

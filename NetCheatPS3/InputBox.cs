@@ -69,12 +69,16 @@ namespace NetCheatPS3
                 var txt = new TextBox();
                 textBoxArg[i] = txt;
                 txt.Name = "txtBox" + i.ToString();
-                txt.Text = Arg[i].defStr;
+                if (textBoxArg.Length == 1)
+                    txt.Text = Properties.Settings.Default.lastIP;
+                else
+                    txt.Text = Arg[i].defStr;
                 txt.Width = this.Width - 20;
                 txt.Location = new Point(10, 20 + (i * 40));
                 txt.Visible = true;
                 txt.BackColor = fmBackColor;
                 txt.ForeColor = fmForeColor;
+                txt.KeyPress += new KeyPressEventHandler(CheckEnter);
                 tBoxIndex = Controls.Count;
                 this.Controls.Add(txt);
 
@@ -83,8 +87,8 @@ namespace NetCheatPS3
                 labelArg[i] = lbl;
                 lbl.Name = "argLabel" + i.ToString();
                 lbl.Text = Arg[i].label;
-                if (lbl.Text.EndsWith(" KeyBind:"))
-                    txt.KeyDown += new KeyEventHandler(KeyHandler_KeyDown);
+                //if (lbl.Text.EndsWith(" KeyBind:"))
+                //    txt.KeyDown += new KeyEventHandler(KeyHandler_KeyDown);
                 lbl.AutoSize = false;
                 lbl.TextAlign = ContentAlignment.MiddleCenter;
                 lbl.Width = this.Width - 20;
@@ -104,6 +108,12 @@ namespace NetCheatPS3
             keyVal = e.KeyData;
             ((TextBox)Controls[tBoxIndex]).Text = e.KeyData.ToString().Replace(", ", " + ");
             e.SuppressKeyPress = true;
+        }
+
+        private void CheckEnter(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+                ibOkay.PerformClick();
         }
 
         private string ParseKeyData(Keys Key)
@@ -129,17 +139,17 @@ namespace NetCheatPS3
             for (int x = 0; x < Arg.Length; x++)
             {
                 Arg[x].retStr = textBoxArg[x].Text;
+                Properties.Settings.Default.lastIP = textBoxArg[x].Text;
+                Properties.Settings.Default.Save();
             }
 
-            this.Dispose();
-            this.Close();
+            Close();
         }
 
         private void ibCancel_Click(object sender, EventArgs e)
         {
             ret = 2;
-            this.Dispose();
-            this.Close();
+            Close();
         }
     }
 }

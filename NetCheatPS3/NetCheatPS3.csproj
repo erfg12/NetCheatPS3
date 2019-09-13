@@ -82,7 +82,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\x86\Debug\PluginInterface.dll</HintPath>
     </Reference>
-    <Reference Include="PS3Lib">
+    <Reference Include="PS3Lib, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\PS3Lib.dll</HintPath>
     </Reference>
     <Reference Include="System" />

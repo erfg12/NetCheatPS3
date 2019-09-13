@@ -251,7 +251,10 @@ namespace NetCheatPS3
         private void okayButt_Click(object sender, EventArgs e)
         {
             if (Form1.settFile == "")
+            {
+                MessageBox.Show("ERR: settFile is blank!");
                 return;
+            }
 
             //KeyBinds
             //for (int x = 0; x < Form1.keyBinds.Length; x++)
@@ -269,6 +272,7 @@ namespace NetCheatPS3
             Form1.PS3.ChangeAPI((Form1.apiDLL == 0) ? PS3Lib.SelectAPI.TargetManager : PS3Lib.SelectAPI.ControlConsole);
 
             Form1.SaveOptions();
+            Close();
         }
 
         private void cancButt_Click(object sender, EventArgs e)
