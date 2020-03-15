@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace NetCheatPS3
 {
 
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
 
         #region NetCheat PS3 Global Variables
@@ -53,7 +53,7 @@ namespace NetCheatPS3
         public const int MaxRes = 10000; /* Max number of results */
         public static ulong SchResCnt = 0; /* Number of results */
         public static int NextSAlign = 0; /* Initial Search sets this to the current alignment */
-        public static bool ValHex = true; /* Determines whether the value is in hex or not */
+        //public static bool ValHex = true; /* Determines whether the value is in hex or not */
         public static bool NewSearch = true; /* When true, Initial Scan will show */
         public static int CancelSearch = 0; /* When 1 the search will cancel, 2 = stop */
         public static ulong GlobAlign = 0; /* Alignment */
@@ -168,6 +168,67 @@ namespace NetCheatPS3
             //PS3TMAPI.ProcessSetMemory(0, PS3TMAPI.UnitType.PPU, Form1.ProcessID, 0, addr, val);
         }
 
+        private void ImportRanges()
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.Filter = "NetCheat Memory Range files (*.ncm)|*.ncm|All files (*.*)|*.*";
+            fd.RestoreDirectory = true;
+
+            if (fd.ShowDialog() == DialogResult.OK)
+            {
+                //Check if file is already added to the recent range imports
+                bool added = false;
+                foreach (string rI in rangeImports)
+                {
+                    if (rI == fd.FileName)
+                    {
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added)
+                {
+                    //File path
+                    Array.Resize(ref rangeImports, rangeImports.Length + 1);
+                    rangeImports[rangeImports.Length - 1] = fd.FileName;
+
+                    //Order
+                    Array.Resize(ref rangeOrder, rangeOrder.Length + 1);
+                    for (int rO = 0; rO < rangeOrder.Length - 1; rO++)
+                        rangeOrder[rO]++;
+                    rangeOrder[rangeOrder.Length - 1] = 0;
+
+                    //Add to recRangeBox
+                    System.IO.FileInfo fi = new System.IO.FileInfo(fd.FileName);
+                    ListViewItem lvi = new ListViewItem(new string[] { fi.Name });
+                    lvi.Tag = rangeOrder.Length - 1;
+                    lvi.ToolTipText = fi.FullName;
+                    recRangeBox.Items.Insert(0, lvi);
+
+                    SaveOptions();
+                }
+
+
+                ListView a = new ListView();
+                a = fileio.OpenRangeFile(fd.FileName);
+
+                if (a == null)
+                    return;
+
+                rangeView.Items.Clear();
+                for (int x = 0; x < a.Items.Count; x++)
+                {
+                    addRangeResults(a.Items[x].SubItems[0].Text, a.Items[x].SubItems[1].Text);
+                }
+
+                //Update range array
+                UpdateMemArray();
+
+                Text = "NetCheat PS3 " + versionNum + " by Dnawrkshp (" + new System.IO.FileInfo(fd.FileName).Name + ")";
+            }
+        }
+
         public static bool apiGetMem(ulong addr, ref byte[] val) //Gets the memory as a byte array
         {
             bool ret = false;
@@ -185,7 +246,7 @@ namespace NetCheatPS3
 
         #region NetCheat Updater
 
-        public bool RunUpdateChecker(bool allowForce)
+        /*public bool RunUpdateChecker(bool allowForce)
         {
             try
             {
@@ -242,7 +303,7 @@ namespace NetCheatPS3
                         Screen.PrimaryScreen.WorkingArea.Height / 2 - (loadingFrm.Height / 2));
                     Application.DoEvents();
 
-                    UpdateNetCheatPS3();
+                    //UpdateNetCheatPS3();
                 }
                 return true;
             }
@@ -250,9 +311,19 @@ namespace NetCheatPS3
             {
                 return false;
             }
+        }*/
+
+        public void addRangeResults(string ri1, string ri2)
+        {
+            string[] str = new string[2];
+            str[0] = ri1;
+            str[1] = ri2;
+            ListViewItem strLV = new ListViewItem(str);
+            rangeView.Items.Add(strLV);
+            rangeViewComboBox.Items.Add(ri1 + " - " + ri2);
         }
 
-        public string[] CheckForUpdate()
+        /*public string[] CheckForUpdate()
         {
             string webpath = "http://www.cod-orc.com/NetCheatUpdate.txt";
             string store = Path.GetTempFileName();
@@ -264,9 +335,9 @@ namespace NetCheatPS3
             File.Delete(store);
 
             return ver;
-        }
+        }*/
 
-        public void UpdateNetCheatPS3()
+        /*public void UpdateNetCheatPS3()
         {
             string webpath = "http://www.cod-orc.com/ncUpdateDir.zip";
             //FileInfo ncFI = new FileInfo(Application.ExecutablePath);
@@ -293,7 +364,7 @@ namespace NetCheatPS3
                 " \"" + Application.StartupPath + "\"" +
                 " \"" + Application.ExecutablePath + "\"");
             Close();
-        }
+        }*/
 
         public static void DecompressFile(string file, string directory)
         {
@@ -322,7 +393,7 @@ namespace NetCheatPS3
 
         #endregion
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 
@@ -381,8 +452,8 @@ namespace NetCheatPS3
 
         private void Main_Load(object sender, EventArgs e)
         {
-            if (!RunUpdateChecker(false))
-                Debug.WriteLine("update failed");
+            //if (!RunUpdateChecker(false))
+            //    Debug.WriteLine("update failed");
             //if (File.Exists(Application.ExecutablePath + ".bak"))
             //    File.Delete(Application.ExecutablePath + ".bak");
             //if (File.Exists(Application.StartupPath + "\\updateNC.bat"))
@@ -646,8 +717,8 @@ namespace NetCheatPS3
                     return;
 
                 int cnt = 0;
-                if (cbListIndex >= 0)
-                    cbList.Items[cbListIndex].Selected = false;
+                //if (cbListIndex >= 0)
+                //    cbList.Items[cbListIndex].Selected = false;
                 for (int x = 0; x < ret.Length; x++)
                 {
 
@@ -661,8 +732,8 @@ namespace NetCheatPS3
                         cbList.Items.Add(ret[x].name);
 
                     cnt = cbList.Items.Count - 1;
-                    cbList.Items[cnt].ForeColor = Color.FromArgb(0, 130, 210);
-                    cbList.Items[cnt].BackColor = Color.Black;
+                    //cbList.Items[cnt].ForeColor = Color.FromArgb(0, 130, 210);
+                    //cbList.Items[cnt].BackColor = Color.Black;
                     Codes[cnt] = ret[x];
                 }
 
@@ -701,7 +772,8 @@ namespace NetCheatPS3
         /* Quickly saves the code as a ncl */
         private void cbSave_Click(object sender, EventArgs e)
         {
-            fileio.SaveFile(Codes[cbListIndex].filename, Codes[cbListIndex]);
+            if (!fileio.SaveFile(Codes[cbListIndex].filename, Codes[cbListIndex]))
+                cbSaveAs.PerformClick();
         }
 
         /* Writes the selected code to the PS3 */
@@ -771,14 +843,14 @@ namespace NetCheatPS3
         {
             if (SchHexCheck.Text == "Hex")
             {
-                ValHex = SchHexCheck.Checked;
+                //ValHex = SchHexCheck.Checked;
 
                 if (schVal.Text.Length == 0)
                     return;
 
-                if (ValHex && schVal.Text.Length <= 8)
+                if (SchHexCheck.Checked && schVal.Text.Length <= 8)
                     schVal.Text = int.Parse(schVal.Text).ToString("X8"); //Dec to Hex
-                else if (ValHex && schVal.Text.Length > 8)
+                else if (SchHexCheck.Checked && schVal.Text.Length > 8)
                     schVal.Text = Int64.Parse(schVal.Text).ToString("X16"); //Dec to Hex
                 else if (schVal.Text.Length <= 8)
                     schVal.Text = Convert.ToInt32(schVal.Text, 16).ToString(); //Hex to Dec
@@ -787,9 +859,9 @@ namespace NetCheatPS3
 
                 if (schVal2.Visible)
                 {
-                    if (ValHex && schVal2.Text.Length <= 8)
+                    if (SchHexCheck.Checked && schVal2.Text.Length <= 8)
                         schVal2.Text = int.Parse(schVal2.Text).ToString("X8"); //Dec to Hex
-                    else if (ValHex && schVal2.Text.Length > 8)
+                    else if (SchHexCheck.Checked && schVal2.Text.Length > 8)
                         schVal2.Text = Int64.Parse(schVal2.Text).ToString("X16"); //Dec to Hex
                     else if (schVal2.Text.Length <= 8)
                         schVal2.Text = Convert.ToInt32(schVal2.Text, 16).ToString(); //Hex to Dec
@@ -1029,7 +1101,7 @@ namespace NetCheatPS3
             String ValStr = "", ValStr2 = "";
             if (align > 0 || align == -2)
             {
-                if (ValHex)
+                if (SchHexCheck.Checked)
                 {
                     if (align > 0)
                     {
@@ -1155,72 +1227,52 @@ namespace NetCheatPS3
                 System.IO.File.Delete(dFileName);
 
             Application.DoEvents();
-            StreamWriter file = new StreamWriter(dFileName, true);
-                lvSch.BeginUpdate();
-            Task.Run(() =>
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(dFileName, true))
             {
-            for (recvCnt = rStart; rDif > 0; recvCnt += sSize)
-            {
-                Task.Run(() =>
-                {
-                ulong oldRecv = recvCnt;
-                recvCnt = misc.ParseSchAddr(recvCnt);
-                if (recvCnt >= rStop || (recvCnt == 0 && oldRecv != 0))
-                    return;
 
-                ulong ret = 0;
+                lvSch.BeginUpdate();
+                for (recvCnt = rStart; rDif > 0; recvCnt += sSize)
+                {
+                    ulong oldRecv = recvCnt;
+                    recvCnt = misc.ParseSchAddr(recvCnt);
+                    if (recvCnt >= rStop || (recvCnt == 0 && oldRecv != 0))
+                        break;
+
+                    ulong ret = 0;
                     //Calculate the size of the ret byte
                     if ((rStop - recvCnt) < sSize)
-                    sSize = (rStop - recvCnt);
+                        sSize = (rStop - recvCnt);
 
-                if (align > 0)
-                    ret = InitSearch(recvCnt, sVal, c, align, sSize, file);
-                else if (align == -1)
-                    ret = InitSearchText(SchHexCheck.Checked, recvCnt, sVal, c, len * 2, sSize, file);
-                else if (align == -2)
-                    ret = InitSearchText(recvCnt, sVal, c, len, sSize, file);
+                    if (align > 0)
+                        ret = InitSearch(recvCnt, sVal, c, align, sSize, file);
+                    else if (align == -1)
+                        ret = InitSearchText(SchHexCheck.Checked, recvCnt, sVal, c, len * 2, sSize, file);
+                    else if (align == -2)
+                        ret = InitSearchText(recvCnt, sVal, c, len, sSize, file);
 
                     //Only refresh if there are results to add
                     if (ret > 0)
                     {
-                        lvSch.Invoke(new MethodInvoker(delegate
-                            {
-                                lvSch.EndUpdate();
-                                Application.DoEvents();
-                                lvSch.BeginUpdate();
-                            }));
+                        lvSch.EndUpdate();
+                        Application.DoEvents();
+                        lvSch.BeginUpdate();
                     }
 
-                SchResCnt += ret;
-                    //this.statusLabel1.Text = "Results found: " + SchResCnt.ToString();
-                    
+                    SchResCnt += ret;
+                    this.statusLabel1.Text = "Results found: " + SchResCnt.ToString();
+                    /*
                     if (SchResCnt >= MaxRes)
                     {
                         SchResCnt = MaxRes; SchResCnt--;
                         schSearch.Text = "New Scan";
                         schProg.Value = 0;
                         schProg.Maximum = 0;
-                        //statusStrip1.Text = "Last result of search: " + recvCnt.ToString("X8");
-
-                        watch.Stop();
-                        long elapsedMs = watch.ElapsedMilliseconds;
-                        statusLabel1.Text += ", Search time: " + ((Single)elapsedMs / (Single)1000).ToString("F") + " seconds";
-
-                        schSearch.Text = "New Scan";
-                        schProg.Maximum = 0;
-                        NewSearch = false;
-                        schNSearch.Enabled = true;
-                        schProg.Value = 0;
-
-                        GlobAlign = (ulong)align;
-                        if (SchPWS.Checked && SchPWS.Visible)
-                            PS3Lib.NET.PS3TMAPI.ProcessContinue(0, PS3Lib.TMAPI.Parameters.ProcessID);
-                        CancelSearch = 0;
-                        lvSch.EndUpdate();
+                        statusStrip1.Text = "Last result of search: " + recvCnt.ToString("X8");
+                        break;
                     }
-                    
+                    */
 
-                    /*if (CancelSearch == 1)
+                    if (CancelSearch == 1)
                     {
                         NewSearch = true;
                         schSearch.Text = "Initial Scan";
@@ -1232,22 +1284,34 @@ namespace NetCheatPS3
                         CancelSearch = 0;
                         lvSch.EndUpdate();
                         return;
-                    }*/
-                    //else if (CancelSearch == 2)
-                    //    goto exitInitSearchLoop;
+                    }
+                    else if (CancelSearch == 2)
+                        goto exitInitSearchLoop;
 
-                    schProg.Invoke((Action)(() =>
-                    {
-                        if ((schProg.Value + 1) < schProg.Maximum)
-                            schProg.Value++; //+= (int)sSize;
-                    }));
-                        rDif--; //-= sSize;
-                        //Application.DoEvents();
-                    });
+                    if ((schProg.Value + 1) < schProg.Maximum)
+                        schProg.Value++; //+= (int)sSize;
+                    rDif--; //-= sSize;
+                    Application.DoEvents();
                 }
-                });
-                //exitInitSearchLoop: ;
-                //RefreshSearchResults(0);
+            exitInitSearchLoop:;
+            }
+            //RefreshSearchResults(0);
+
+            watch.Stop();
+            long elapsedMs = watch.ElapsedMilliseconds;
+            statusLabel1.Text += ", Search time: " + ((Single)elapsedMs / (Single)1000).ToString("F") + " seconds";
+
+            schSearch.Text = "New Scan";
+            schProg.Maximum = 0;
+            NewSearch = false;
+            schNSearch.Enabled = true;
+            schProg.Value = 0;
+
+            GlobAlign = (ulong)align;
+            if (SchPWS.Checked && SchPWS.Visible)
+                PS3Lib.NET.PS3TMAPI.ProcessContinue(0, PS3Lib.TMAPI.Parameters.ProcessID);
+            CancelSearch = 0;
+            lvSch.EndUpdate();
         }
 
         private void SchRef_Click(object sender, EventArgs e)
@@ -1283,13 +1347,13 @@ namespace NetCheatPS3
 
             if (NextSAlign > 0 || NextSAlign == -2)
             {
-                int align = Form1.NextSAlign;
+                int align = MainForm.NextSAlign;
                 String ValStr = "", ValStr2 = "";
                 int oldA = align;
                 if (align == -2)
                     align = schVal.Text.Length / 2;
 
-                if (ValHex)
+                if (SchHexCheck.Checked)
                 {
                     ValStr = schVal.Text.PadLeft(align * 2, '0');
                     schVal.Text = ValStr;
@@ -1461,7 +1525,7 @@ namespace NetCheatPS3
             while ((sCount + (ulong)sText.Length) <= sSize)
             {
 
-                if (Form1.CancelSearch == 1)
+                if (MainForm.CancelSearch == 1)
                     return 0;
                 
                 //if (misc.ArrayCompare(sTextLong, ret, cLong, len / 2, (int)sCount, compMode))
@@ -1498,7 +1562,7 @@ namespace NetCheatPS3
 
             while ((sCount + (ulong)sText.Length) <= sSize)
             {
-                if (Form1.CancelSearch == 1)
+                if (MainForm.CancelSearch == 1)
                     return 0;
 
                 byte[] argB = new byte[len / 2];
@@ -1537,7 +1601,7 @@ namespace NetCheatPS3
             if (SchResCnt >= MaxRes)
                 maxRes2 = MaxCodes;
 
-            Form1.CodeRes[] tempSchRes = new Form1.CodeRes[maxRes2];
+            MainForm.CodeRes[] tempSchRes = new MainForm.CodeRes[maxRes2];
 
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(dFileName + "2", true))
             {
@@ -1602,7 +1666,7 @@ namespace NetCheatPS3
             if (SchResCnt >= MaxRes)
                 maxRes2 = MaxCodes;
 
-            Form1.CodeRes[] tempSchRes = new Form1.CodeRes[maxRes2];
+            MainForm.CodeRes[] tempSchRes = new MainForm.CodeRes[maxRes2];
             for (cnt = 0; cnt < SchResCnt; cnt++)
             {
 
@@ -1661,7 +1725,7 @@ namespace NetCheatPS3
                 case 0: /* Refresh by reloading everything from the dump */
                     lvSch.Items.Clear();
 
-                    if (Form1.SchResCnt == 0)
+                    if (MainForm.SchResCnt == 0)
                         reloadDump = true;
 
                     if (reloadDump)
@@ -1701,7 +1765,7 @@ namespace NetCheatPS3
                                 }
                                 if (retRes[z].val == null && reloadDump)
                                 {
-                                    Form1.SchResCnt = x;
+                                    MainForm.SchResCnt = x;
                                     statusLabel1.Text = "Results: " + x.ToString();
                                     lvSch.EndUpdate();
                                     NewSearch = false;
@@ -1716,7 +1780,7 @@ namespace NetCheatPS3
                     {
                         lvSch.BeginUpdate();
                         //for (x = 0; x < Form1.SchResCnt; x++)
-                        while (x < Form1.SchResCnt)
+                        while (x < MainForm.SchResCnt)
                         {
                             String Addr = "";
 
@@ -1756,7 +1820,7 @@ namespace NetCheatPS3
                     break;
                 case 1: /* Refresh everything by grabbing the values from the PS3 */
                     lvSch.BeginUpdate();
-                    for (x = 0; x < Form1.SchResCnt; x++)
+                    for (x = 0; x < MainForm.SchResCnt; x++)
                     {
                         String Addr = "";
                         int align = (int)GlobAlign;
@@ -1768,7 +1832,7 @@ namespace NetCheatPS3
                         for (int z = 0; z < retRes.Length; z++)
                         {
 
-                            if (x >= Form1.SchResCnt)
+                            if (x >= MainForm.SchResCnt)
                                 break;
 
                             if ((int)GlobAlign == -1 || (int)GlobAlign == -2)
@@ -1935,67 +1999,7 @@ namespace NetCheatPS3
 
         private void ImportRange_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Filter = "NetCheat Memory Range files (*.ncm)|*.ncm|All files (*.*)|*.*";
-            fd.RestoreDirectory = true;
-
-            if (fd.ShowDialog() == DialogResult.OK)
-            {
-                //Check if file is already added to the recent range imports
-                bool added = false;
-                foreach (string rI in rangeImports)
-                {
-                    if (rI == fd.FileName)
-                    {
-                        added = true;
-                        break;
-                    }
-                }
-
-                if (!added)
-                {
-                    //File path
-                    Array.Resize(ref rangeImports, rangeImports.Length + 1);
-                    rangeImports[rangeImports.Length - 1] = fd.FileName;
-
-                    //Order
-                    Array.Resize(ref rangeOrder, rangeOrder.Length + 1);
-                    for (int rO = 0; rO < rangeOrder.Length - 1; rO++)
-                        rangeOrder[rO]++;
-                    rangeOrder[rangeOrder.Length - 1] = 0;
-
-                    //Add to recRangeBox
-                    System.IO.FileInfo fi = new System.IO.FileInfo(fd.FileName);
-                    ListViewItem lvi = new ListViewItem(new string[] { fi.Name });
-                    lvi.Tag = rangeOrder.Length - 1;
-                    lvi.ToolTipText = fi.FullName;
-                    recRangeBox.Items.Insert(0, lvi);
-
-                    SaveOptions();
-                }
-
-
-                ListView a = new ListView();
-                a = fileio.OpenRangeFile(fd.FileName);
-
-                if (a == null)
-                    return;
-
-                rangeView.Items.Clear();
-                string[] str = new string[2];
-                for (int x = 0; x < a.Items.Count; x++)
-                {
-                    str[0] = a.Items[x].SubItems[0].Text;
-                    str[1] = a.Items[x].SubItems[1].Text;
-                    ListViewItem strLV = new ListViewItem(str);
-                    rangeView.Items.Add(strLV);
-                }
-
-                //Update range array
-                UpdateMemArray();
-
-                Text = "NetCheat PS3 " + versionNum + " by Dnawrkshp (" + new System.IO.FileInfo(fd.FileName).Name + ")";
-            }
+            ImportRanges();
         }
 
         private void SaveRange_Click(object sender, EventArgs e)
@@ -2417,7 +2421,7 @@ namespace NetCheatPS3
             }
         }
 
-        private void CopyResults()
+        private String GetResults()
         {
             int x = 0, max = lvSch.Items.Count - 1;
             String text = "", res = "";
@@ -2441,7 +2445,7 @@ namespace NetCheatPS3
                 {
                     a.val = BitConverter.GetBytes(uint.Parse(lvSch.Items[x].SubItems[1].Text, System.Globalization.NumberStyles.HexNumber));
                     if (a.val == null)
-                        return;
+                        return "";
                     if (BitConverter.IsLittleEndian) Array.Reverse(a.val);
                 }
 
@@ -2471,17 +2475,23 @@ namespace NetCheatPS3
                 }
                 res = res + text + "\n";
             }
-            if (res != null)
+            return res;
+        }
+
+        private void CopyResults()
+        {
+            String res = GetResults();
+            if (res != null && res != "")
                 Clipboard.SetDataObject(new DataObject(DataFormats.Text, res));
         }
 
         private void RefreshFromDump()
         {
-            Form1.SchResCnt = 0;
-            Form1.GlobAlign = 0;
+            MainForm.SchResCnt = 0;
+            MainForm.GlobAlign = 0;
             bool update = !schNSearch.Enabled;
             RefreshSearchResults(0);
-            if (Form1.SchResCnt != 0 && update)
+            if (MainForm.SchResCnt != 0 && update)
             {
                 /* Setup CompBox */
                 compBox.Items.Add("Increased By");
@@ -2562,13 +2572,9 @@ namespace NetCheatPS3
                         return;
 
                     rangeView.Items.Clear();
-                    string[] str = new string[2];
                     for (int x = 0; x < a.Items.Count; x++)
                     {
-                        str[0] = a.Items[x].SubItems[0].Text;
-                        str[1] = a.Items[x].SubItems[1].Text;
-                        ListViewItem strLV = new ListViewItem(str);
-                        rangeView.Items.Add(strLV);
+                        addRangeResults(a.Items[x].SubItems[0].Text, a.Items[x].SubItems[1].Text);
                     }
 
                     //Update range array
@@ -2718,8 +2724,8 @@ namespace NetCheatPS3
 
         private void updateStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (!RunUpdateChecker(true))
-                MessageBox.Show("update failed");
+            //if (!RunUpdateChecker(true))
+            //    MessageBox.Show("update failed");
         }
 
         private void gameStatusStripMenuItem1_Click(object sender, EventArgs e)
@@ -2745,7 +2751,13 @@ namespace NetCheatPS3
             */
         }
 
-        private async void findRanges_Click(object sender, EventArgs e)
+        public static string GetHexStringFrom(byte[] byteArray)
+        {
+            return BitConverter.ToString(byteArray); //To convert the whole array
+        }
+
+        bool findRangesCancel = false;
+        private void findRanges_Click(object sender, EventArgs e)
         {
             if (!connected)
             {
@@ -2755,78 +2767,57 @@ namespace NetCheatPS3
 
             if (findRanges.Text == "Stop")
             {
-                //findRangesCancel = true;
+                findRangesCancel = true;
                 return;
             }
 
             rangeView.Items.Clear();
 
-            //ulong findAddr = 0;
-            //ulong blockSize = 0x10000;
+            ulong findAddr = 0;
+            ulong blockSize = 0x10000;
             findRanges.Text = "Stop";
+            bool inMemRange = false;
             findRangeProgBar.Maximum = 4096;
 
-            statusLabel1.Text = "Scanning memory...";
+            ulong blockStart = 0;
 
-            Task.Run(() =>
-             {
-                 DoWork();
-             });
+            for (findAddr = 0; findAddr < 0xFFFFFFFC; findAddr += blockSize)
+            {
+                if (findRangesCancel)
+                    break;
 
+                if ((findAddr % 0x100000) == 0)
+                {
+                    statusLabel1.Text = "Scanning memory at 0x" + findAddr.ToString("X8");
+                    findRangeProgBar.Increment(1);
+                    Application.DoEvents();
+                }
+
+                byte[] ret = new byte[1];
+                bool validRegion = apiGetMem(findAddr, ref ret);
+
+                //Start new mem block
+                if (validRegion && !inMemRange)
+                {
+                    blockStart = findAddr;
+                    inMemRange = true;
+                }
+                //Add block
+                else if (!validRegion && inMemRange)
+                {
+                    addRangeResults(blockStart.ToString("X8"), findAddr.ToString("X8"));
+                    inMemRange = false;
+                }
+            }
+
+            findRangesCancel = false;
             findRanges.Text = "Find Ranges";
             findRangeProgBar.Value = 0;
 
             //Update range array
-            
+            UpdateMemArray();
             if (misc.MemArray != null || misc.MemArray.Length > 0)
                 MessageBox.Show("Find Ranges Completed!\nUnderstand that the range finder searches in blocks of 0x10000.\nThis may cause the ranges to be off by a value from 1 to 0xFFFF.");
-        }
-
-        private void DoWork()
-        {
-            List<int> memRegionList = Enumerable.Range(1, 65535).ToList();
-            foreach (int i in memRegionList)
-            {
-                Task.Run(() =>
-                {
-                    ulong blockStart = 0;
-                    bool inMemRange = false;
-                    ulong findAddr = Convert.ToUInt32(i) * 0x10000;
-                    byte[] ret = new byte[1];
-                    Debug.WriteLine("Scanning memory at 0x" + findAddr.ToString("X8"));
-                    bool validRegion = apiGetMem(findAddr, ref ret);
-
-                                         //Start new mem block
-                                         if (validRegion && !inMemRange)
-                    {
-                        blockStart = findAddr;
-                        inMemRange = true;
-                    }
-                                         //Add block
-                                         else if (!validRegion && inMemRange)
-                    {
-                        string[] str = new string[2];
-                        str[0] = blockStart.ToString("X8");
-                        str[1] = findAddr.ToString("X8");
-                        ListViewItem strLV = new ListViewItem(str);
-                        rangeView.Invoke(new MethodInvoker(delegate
-                        {
-                            rangeView.Items.Add(strLV);
-                            UpdateMemArray();
-                        }));
-                        inMemRange = false;
-                    }
-
-                    findRangeProgBar.Invoke((Action)(() =>
-                    {
-                        if ((findAddr % 0x100000) == 0)
-                        {
-                            findRangeProgBar.Increment(1);
-                            Application.DoEvents();
-                        }
-                    }));
-                });
-            };
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -3046,10 +3037,10 @@ namespace NetCheatPS3
             attachProcessButton.Enabled = false;
 
             //Add the first Code
-            cbList.Items.Add("NEW CODE");
+            //cbList.Items.Add("NEW CODE");
             //Set backcolor
-            cbList.Items[0].ForeColor = ncForeColor;
-            cbList.Items[0].BackColor = ncBackColor;
+            //cbList.Items[0].ForeColor = ncForeColor;
+            //cbList.Items[0].BackColor = ncBackColor;
 
             Codes[CodesCount].name = "NEW CODE";
             Codes[CodesCount].state = false;
@@ -3057,13 +3048,17 @@ namespace NetCheatPS3
             compBox.SelectedIndex = 0;
             dFileName = Application.StartupPath + "\\dump.txt";
 
-            cbList.Items[0].Selected = true;
-            cbList.Items[0].Selected = false;
+            rangeViewComboBox.SelectedIndex = 0;
+
+            //cbList.Items[0].Selected = true;
+            //cbList.Items[0].Selected = false;
 
             //Add first range
             string[] a = { "00000000", "FFFFFFFC" };
             ListViewItem b = new ListViewItem(a);
             rangeView.Items.Add(b);
+
+            addRangeResults("00000000", "FFFFFFFC");
 
             //Update range array
             UpdateMemArray();
@@ -3130,6 +3125,41 @@ namespace NetCheatPS3
 
             if (refPlugin.Text == "Close Plugins")
                 Global.Plugins.ClosePlugins();
+        }
+
+        private void rangeViewComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (rangeViewComboBox.Text != "Select A Range")
+            {
+                string[] ranges = rangeViewComboBox.Text.Split('-');
+                schRange1.Text = ranges[0].Trim();
+                schRange2.Text = ranges[1].Trim();
+            }
+        }
+
+        private void recRangeBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void importRangesBtnSrch_Click_1(object sender, EventArgs e)
+        {
+            ImportRanges();
+        }
+
+        private void lvSch_DoubleClick(object sender, EventArgs e)
+        {
+            String res = GetResults();
+            if (res != null && res != "")
+            {
+                cbList.Items.Add("NEW CODE");
+                CodesCount = cbList.Items.Count - 1;
+                cbList.Items[CodesCount].ForeColor = ncForeColor;
+                cbList.Items[CodesCount].BackColor = ncBackColor;
+                Codes[CodesCount].name = "NEW CODE";
+                Codes[CodesCount].state = false;
+                Codes[CodesCount].codes = res;
+            }
         }
     }
 }

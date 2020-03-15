@@ -17,10 +17,10 @@ namespace NetCheatPS3
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Form1.tConstWrite.Start();
+            MainForm.tConstWrite.Start();
 
-            Application.Run(new Form1());
-            Form1.tConstWrite.Abort();
+            Application.Run(new MainForm());
+            MainForm.tConstWrite.Abort();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace NetCheatPS3
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.TabCon = new System.Windows.Forms.TabControl();
             this.CodesTab = new System.Windows.Forms.TabPage();
             this.cbCodes = new System.Windows.Forms.RichTextBox();
@@ -46,6 +46,8 @@
             this.cbList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SearchTab = new System.Windows.Forms.TabPage();
+            this.importRangesBtnSrch = new System.Windows.Forms.Button();
+            this.rangeViewComboBox = new System.Windows.Forms.ComboBox();
             this.saveSRes = new System.Windows.Forms.Button();
             this.loadSRes = new System.Windows.Forms.Button();
             this.schVal2 = new System.Windows.Forms.TextBox();
@@ -317,6 +319,8 @@
             // 
             this.SearchTab.AutoScroll = true;
             this.SearchTab.BackColor = System.Drawing.Color.Black;
+            this.SearchTab.Controls.Add(this.importRangesBtnSrch);
+            this.SearchTab.Controls.Add(this.rangeViewComboBox);
             this.SearchTab.Controls.Add(this.saveSRes);
             this.SearchTab.Controls.Add(this.loadSRes);
             this.SearchTab.Controls.Add(this.schVal2);
@@ -345,10 +349,36 @@
             this.SearchTab.TabIndex = 1;
             this.SearchTab.Text = "Search";
             // 
+            // importRangesBtnSrch
+            // 
+            this.importRangesBtnSrch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.importRangesBtnSrch.Location = new System.Drawing.Point(259, 81);
+            this.importRangesBtnSrch.Name = "importRangesBtnSrch";
+            this.importRangesBtnSrch.Size = new System.Drawing.Size(87, 23);
+            this.importRangesBtnSrch.TabIndex = 48;
+            this.importRangesBtnSrch.Text = "Import Ranges";
+            this.importRangesBtnSrch.UseVisualStyleBackColor = true;
+            this.importRangesBtnSrch.Click += new System.EventHandler(this.importRangesBtnSrch_Click_1);
+            // 
+            // rangeViewComboBox
+            // 
+            this.rangeViewComboBox.BackColor = System.Drawing.SystemColors.MenuText;
+            this.rangeViewComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.rangeViewComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.rangeViewComboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(130)))), ((int)(((byte)(210)))));
+            this.rangeViewComboBox.FormattingEnabled = true;
+            this.rangeViewComboBox.Items.AddRange(new object[] {
+            "Select A Range"});
+            this.rangeViewComboBox.Location = new System.Drawing.Point(120, 82);
+            this.rangeViewComboBox.Name = "rangeViewComboBox";
+            this.rangeViewComboBox.Size = new System.Drawing.Size(132, 21);
+            this.rangeViewComboBox.TabIndex = 47;
+            this.rangeViewComboBox.SelectedIndexChanged += new System.EventHandler(this.rangeViewComboBox_SelectedIndexChanged);
+            // 
             // saveSRes
             // 
             this.saveSRes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.saveSRes.Location = new System.Drawing.Point(230, 138);
+            this.saveSRes.Location = new System.Drawing.Point(236, 138);
             this.saveSRes.Name = "saveSRes";
             this.saveSRes.Size = new System.Drawing.Size(110, 28);
             this.saveSRes.TabIndex = 46;
@@ -359,7 +389,7 @@
             // loadSRes
             // 
             this.loadSRes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.loadSRes.Location = new System.Drawing.Point(114, 138);
+            this.loadSRes.Location = new System.Drawing.Point(120, 138);
             this.loadSRes.Name = "loadSRes";
             this.loadSRes.Size = new System.Drawing.Size(110, 28);
             this.loadSRes.TabIndex = 45;
@@ -383,7 +413,7 @@
             this.DumpMem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.DumpMem.Location = new System.Drawing.Point(9, 138);
             this.DumpMem.Name = "DumpMem";
-            this.DumpMem.Size = new System.Drawing.Size(99, 28);
+            this.DumpMem.Size = new System.Drawing.Size(105, 28);
             this.DumpMem.TabIndex = 42;
             this.DumpMem.Text = "Dump Memory";
             this.DumpMem.UseVisualStyleBackColor = true;
@@ -392,6 +422,7 @@
             // compBox
             // 
             this.compBox.BackColor = System.Drawing.Color.Black;
+            this.compBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.compBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.compBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(130)))), ((int)(((byte)(210)))));
             this.compBox.FormattingEnabled = true;
@@ -451,15 +482,13 @@
             this.schProg.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(210)))));
             this.schProg.Location = new System.Drawing.Point(9, 170);
             this.schProg.Name = "schProg";
-            this.schProg.Size = new System.Drawing.Size(440, 26);
+            this.schProg.Size = new System.Drawing.Size(438, 26);
             this.schProg.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.schProg.TabIndex = 36;
             // 
             // SchHexCheck
             // 
             this.SchHexCheck.AutoSize = true;
-            this.SchHexCheck.Checked = true;
-            this.SchHexCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.SchHexCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SchHexCheck.Location = new System.Drawing.Point(0, 6);
             this.SchHexCheck.Name = "SchHexCheck";
@@ -481,6 +510,7 @@
             // cbSchAlign
             // 
             this.cbSchAlign.BackColor = System.Drawing.Color.Black;
+            this.cbSchAlign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSchAlign.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cbSchAlign.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(130)))), ((int)(((byte)(210)))));
             this.cbSchAlign.FormattingEnabled = true;
@@ -530,6 +560,7 @@
             this.lvSch.UseCompatibleStateImageBehavior = false;
             this.lvSch.View = System.Windows.Forms.View.Details;
             this.lvSch.SelectedIndexChanged += new System.EventHandler(this.lvSch_SelectedIndexChanged);
+            this.lvSch.DoubleClick += new System.EventHandler(this.lvSch_DoubleClick);
             this.lvSch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lvSch_KeyUp);
             this.lvSch.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvSch_MouseUp);
             // 
@@ -573,7 +604,7 @@
             this.schVal.Name = "schVal";
             this.schVal.Size = new System.Drawing.Size(120, 20);
             this.schVal.TabIndex = 29;
-            this.schVal.Text = "00000001";
+            this.schVal.Text = "100";
             // 
             // schRange2
             // 
@@ -633,17 +664,17 @@
             // 
             // findRangeProgBar
             // 
-            this.findRangeProgBar.Location = new System.Drawing.Point(235, 34);
+            this.findRangeProgBar.Location = new System.Drawing.Point(235, 35);
             this.findRangeProgBar.Name = "findRangeProgBar";
-            this.findRangeProgBar.Size = new System.Drawing.Size(115, 30);
+            this.findRangeProgBar.Size = new System.Drawing.Size(115, 25);
             this.findRangeProgBar.TabIndex = 13;
             // 
             // findRanges
             // 
             this.findRanges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.findRanges.Location = new System.Drawing.Point(356, 34);
+            this.findRanges.Location = new System.Drawing.Point(356, 35);
             this.findRanges.Name = "findRanges";
-            this.findRanges.Size = new System.Drawing.Size(91, 30);
+            this.findRanges.Size = new System.Drawing.Size(91, 25);
             this.findRanges.TabIndex = 12;
             this.findRanges.Text = "Find Ranges";
             this.findRanges.UseVisualStyleBackColor = true;
@@ -667,6 +698,7 @@
             this.recRangeBox.TabStop = false;
             this.recRangeBox.UseCompatibleStateImageBehavior = false;
             this.recRangeBox.View = System.Windows.Forms.View.Details;
+            this.recRangeBox.SelectedIndexChanged += new System.EventHandler(this.recRangeBox_SelectedIndexChanged);
             this.recRangeBox.DoubleClick += new System.EventHandler(this.recRangeBox_DoubleClick);
             // 
             // colFileName
@@ -1086,7 +1118,7 @@
             this.startGameButt.ForeColorChanged += new System.EventHandler(this.startGameButt_ForeColorChanged);
             this.startGameButt.Click += new System.EventHandler(this.startGameButt_Click);
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1106,7 +1138,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(501, 501);
             this.MinimumSize = new System.Drawing.Size(501, 501);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "NetCheat PS3 by Dnawrkshp";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Main_Load);
@@ -1218,6 +1250,8 @@
         private System.Windows.Forms.Button findRanges;
         private System.Windows.Forms.Button pauseGameButt;
         private System.Windows.Forms.Button startGameButt;
+        private System.Windows.Forms.ComboBox rangeViewComboBox;
+        private System.Windows.Forms.Button importRangesBtnSrch;
     }
 }
 

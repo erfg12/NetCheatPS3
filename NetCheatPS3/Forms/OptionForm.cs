@@ -28,18 +28,18 @@ namespace NetCheatPS3
             fcolCB.SelectedIndex = -1;
 
             updPB = false;
-            bcolR.Text = Form1.ncBackColor.R.ToString();
-            bcolG.Text = Form1.ncBackColor.G.ToString();
-            fcolR.Text = Form1.ncForeColor.R.ToString();
-            fcolG.Text = Form1.ncForeColor.G.ToString();
+            bcolR.Text = MainForm.ncBackColor.R.ToString();
+            bcolG.Text = MainForm.ncBackColor.G.ToString();
+            fcolR.Text = MainForm.ncForeColor.R.ToString();
+            fcolG.Text = MainForm.ncForeColor.G.ToString();
             updPB = true;
-            bcolB.Text = Form1.ncBackColor.B.ToString();
-            fcolB.Text = Form1.ncForeColor.B.ToString();
+            bcolB.Text = MainForm.ncBackColor.B.ToString();
+            fcolB.Text = MainForm.ncForeColor.B.ToString();
 
             bColors[0] = Color.FromArgb(0, 130, 210);
-            if (Form1.ncBackColor.Equals(bColors[0]))
+            if (MainForm.ncBackColor.Equals(bColors[0]))
                 bcolCB.SelectedIndex = 0;
-            else if (Form1.ncForeColor.Equals(bColors[0]))
+            else if (MainForm.ncForeColor.Equals(bColors[0]))
                 fcolCB.SelectedIndex = 0;
 
             KnownColor[] colors = (KnownColor[])Enum.GetValues(typeof(KnownColor));
@@ -49,17 +49,17 @@ namespace NetCheatPS3
                 Array.Resize(ref bColors, bColors.Length + 1);
                 bColors[bColors.Length - 1] = color;
                 bcolCB.Items.Add(color.Name);
-                if (color.R == Form1.ncBackColor.R && color.G == Form1.ncBackColor.G && color.B == Form1.ncBackColor.B)
+                if (color.R == MainForm.ncBackColor.R && color.G == MainForm.ncBackColor.G && color.B == MainForm.ncBackColor.B)
                     bcolCB.SelectedIndex = bColors.Length - 1;
                 fcolCB.Items.Add(color.Name);
-                if (color.R == Form1.ncForeColor.R && color.G == Form1.ncForeColor.G && color.B == Form1.ncForeColor.B)
+                if (color.R == MainForm.ncForeColor.R && color.G == MainForm.ncForeColor.G && color.B == MainForm.ncForeColor.B)
                     fcolCB.SelectedIndex = bColors.Length - 1;
             }
 
             //Keybinding options
-            for (x = 0; x < Form1.keyBinds.Length; x++)
+            for (x = 0; x < MainForm.keyBinds.Length; x++)
             {
-                string[] item = { Form1.keyNames[x], ParseKeyData(Form1.keyBinds[x]) };
+                string[] item = { MainForm.keyNames[x], ParseKeyData(MainForm.keyBinds[x]) };
                 var lviItem = new ListViewItem(item);
                 keyList.Items.Add(lviItem);
             }
@@ -72,7 +72,7 @@ namespace NetCheatPS3
                 fcolCB.Text = "Custom";
 
             /* API */
-            if (Form1.apiDLL == 0)
+            if (MainForm.apiDLL == 0)
                 tmapiDLL.Checked = true;
             else
                 ccapiDLL.Checked = true;
@@ -189,7 +189,7 @@ namespace NetCheatPS3
 
         private void keyList_DoubleClick(object sender, EventArgs e)
         {
-            Form1.IBArg[] a = new Form1.IBArg[1];
+            MainForm.IBArg[] a = new MainForm.IBArg[1];
 
             a[0].defStr = keyList.Items[keyListSelIndex].SubItems[1].Text;
             a[0].label = keyList.Items[keyListSelIndex].SubItems[0].Text + " KeyBind:";
@@ -202,7 +202,7 @@ namespace NetCheatPS3
             if (a[0].retStr.Length != 0)
                 keyList.Items[keyListSelIndex].SubItems[1].Text = a[0].retStr;
 
-            Form1.keyBinds[keyListSelIndex] = InputBox.keyVal;
+            MainForm.keyBinds[keyListSelIndex] = InputBox.keyVal;
         }
 
         int keyListSelIndex = 0;
@@ -219,7 +219,7 @@ namespace NetCheatPS3
         }
 
         /* Brings up the Input Box with the arguments of a */
-        public Form1.IBArg[] CallIBox(Form1.IBArg[] a)
+        public MainForm.IBArg[] CallIBox(MainForm.IBArg[] a)
         {
             InputBox ib = new InputBox();
 
@@ -229,8 +229,8 @@ namespace NetCheatPS3
             ib.fmLeft = this.Left;
             ib.fmTop = this.Top;
             ib.TopMost = true;
-            ib.BackColor = Form1.ncBackColor;
-            ib.ForeColor = Form1.ncForeColor;
+            ib.BackColor = MainForm.ncBackColor;
+            ib.ForeColor = MainForm.ncForeColor;
             ib.Show();
 
             while (ib.ret == 0)
@@ -250,7 +250,7 @@ namespace NetCheatPS3
 
         private void okayButt_Click(object sender, EventArgs e)
         {
-            if (Form1.settFile == "")
+            if (MainForm.settFile == "")
             {
                 MessageBox.Show("ERR: settFile is blank!");
                 return;
@@ -264,14 +264,14 @@ namespace NetCheatPS3
             //}
 
             //Colors
-            Form1.ncBackColor = Color.FromArgb(int.Parse(bcolR.Text), int.Parse(bcolG.Text), int.Parse(bcolB.Text));
-            Form1.ncForeColor = Color.FromArgb(int.Parse(fcolR.Text), int.Parse(fcolG.Text), int.Parse(fcolB.Text));
+            MainForm.ncBackColor = Color.FromArgb(int.Parse(bcolR.Text), int.Parse(bcolG.Text), int.Parse(bcolB.Text));
+            MainForm.ncForeColor = Color.FromArgb(int.Parse(fcolR.Text), int.Parse(fcolG.Text), int.Parse(fcolB.Text));
 
             //API
-            Form1.apiDLL = ccapiDLL.Checked ? 1 : 0;
-            Form1.PS3.ChangeAPI((Form1.apiDLL == 0) ? PS3Lib.SelectAPI.TargetManager : PS3Lib.SelectAPI.ControlConsole);
+            MainForm.apiDLL = ccapiDLL.Checked ? 1 : 0;
+            MainForm.PS3.ChangeAPI((MainForm.apiDLL == 0) ? PS3Lib.SelectAPI.TargetManager : PS3Lib.SelectAPI.ControlConsole);
 
-            Form1.SaveOptions();
+            MainForm.SaveOptions();
             Close();
         }
 

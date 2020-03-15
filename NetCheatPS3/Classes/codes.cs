@@ -17,7 +17,7 @@ namespace NetCheatPS3
         //Struct for the API to constant write codes
         public struct ConstCode
         {
-            public Form1.CodeDB Codes;  //Parsed codes to run
+            public MainForm.CodeDB Codes;  //Parsed codes to run
             public uint ID;             //ID to distinguish (used for removing ConstCodes)
         }
 
@@ -31,17 +31,17 @@ namespace NetCheatPS3
             bool sleepThread = false;
             while (true)
             {
-                if (!Form1.connected)
+                if (!MainForm.connected)
                     connected = 0;
-                if (Form1.connected && connected == 0)
+                if (MainForm.connected && connected == 0)
                     connected = ConnectPS3();
-                if (connected == 1 && Form1.attached)
+                if (connected == 1 && MainForm.attached)
                     connected = AttachPS3();
 
-                if (Form1.ConstantLoop == 1 && (Form1.apiDLL == 0 || connected == 2))
+                if (MainForm.ConstantLoop == 1 && (MainForm.apiDLL == 0 || connected == 2))
                 {
                     sleepThread = false;
-                    for (int x = 0; x <= Form1.CodesCount; x++)
+                    for (int x = 0; x <= MainForm.CodesCount; x++)
                     {
                         //Plugin codes
                         for (int y = 0; y < ConstCodes.Length; y++)
@@ -60,9 +60,9 @@ namespace NetCheatPS3
                         }
 
                         //User codes
-                        sleepThread |= Form1.Codes[x].state;
-                        if (Form1.Codes[x].state == true && Form1.ConstantLoop == 1)
-                            WriteToPS32(Form1.Codes[x]);
+                        sleepThread |= MainForm.Codes[x].state;
+                        if (MainForm.Codes[x].state == true && MainForm.ConstantLoop == 1)
+                            WriteToPS32(MainForm.Codes[x]);
                     }
                 }
 
@@ -75,14 +75,14 @@ namespace NetCheatPS3
         {
             try
             {
-                if (Form1.apiDLL == 0) //TMAPI
+                if (MainForm.apiDLL == 0) //TMAPI
                 {
-                    if (Form1.PS3.ConnectTarget())
+                    if (MainForm.PS3.ConnectTarget())
                         return 1;
                 }
                 else //CCAPI
                 {
-                    if (Form1.IPAddrStr != "" && Form1.PS3.ConnectTarget(Form1.IPAddrStr))
+                    if (MainForm.IPAddrStr != "" && MainForm.PS3.ConnectTarget(MainForm.IPAddrStr))
                         return 1;
                 }
             }
@@ -95,7 +95,7 @@ namespace NetCheatPS3
 
         public static int AttachPS3()
         {
-            if (Form1.PS3.AttachProcess())
+            if (MainForm.PS3.AttachProcess())
                 return 2;
 
             return 0;
@@ -124,7 +124,7 @@ namespace NetCheatPS3
 
             //If the state is true make sure that ConstantWriting is on
             if (state)
-                Form1.ConstantLoop = 1;
+                MainForm.ConstantLoop = 1;
 
             //Return the ID
             return ID;
@@ -145,8 +145,8 @@ namespace NetCheatPS3
                 return;
 
             //Code found so disable constant writing
-            int cLoop = Form1.ConstantLoop;
-            Form1.ConstantLoop = 0;
+            int cLoop = MainForm.ConstantLoop;
+            MainForm.ConstantLoop = 0;
 
             for (int x = ind; x < (ConstCodes.Length - 1); x++)
             {
@@ -156,7 +156,7 @@ namespace NetCheatPS3
             //Truncate the end
             Array.Resize(ref ConstCodes, ConstCodes.Length - 1);
 
-            Form1.ConstantLoop = cLoop;
+            MainForm.ConstantLoop = cLoop;
         }
 
         /*
@@ -169,7 +169,7 @@ namespace NetCheatPS3
                 {
                     ConstCodes[ind].Codes.state = state;
                     if (state)
-                        Form1.ConstantLoop = 1;
+                        MainForm.ConstantLoop = 1;
                     break;
                 }
         }
@@ -188,7 +188,7 @@ namespace NetCheatPS3
         /*
          * Loops through each code and calls ProcPreProcCode to run them
          */
-        public static void WriteToPS32(Form1.CodeDB Codes)
+        public static void WriteToPS32(MainForm.CodeDB Codes)
         {
             if (Codes.codes == null || Codes.CData == null)
                 return;
@@ -215,7 +215,7 @@ namespace NetCheatPS3
         /*
          * Runs codes that have already been processed
          */
-        public static int ProcPreProcCode(Form1.CodeDB Codes, int cnt)
+        public static int ProcPreProcCode(MainForm.CodeDB Codes, int cnt)
         {
             ulong addr = Codes.CData[cnt].addr;
             byte[] val = Codes.CData[cnt].val;
@@ -232,21 +232,21 @@ namespace NetCheatPS3
                 case '0':
                     byte[] stw0 = new byte[1];
                     stw0[0] = val[val.Length - 1];
-                    Form1.apiSetMem(addr, stw0);
+                    MainForm.apiSetMem(addr, stw0);
                     break;
                 case '1':
                     byte[] stw1 = new byte[2];
                     stw1[0] = val[val.Length - 2];
                     stw1[1] = val[val.Length - 1];
-                    Form1.apiSetMem(addr, val);
+                    MainForm.apiSetMem(addr, val);
                     break;
                 case '2':
-                    Form1.apiSetMem(addr, val);
+                    MainForm.apiSetMem(addr, val);
                     //PS3TMAPI.ProcessSetMemory(0, PS3TMAPI.UnitType.PPU, Form1.ProcessID, 0, addr, val);
                     break;
                 case '6':
                     byte[] pretByte = new byte[4];
-                    Form1.apiGetMem(addr, ref pretByte);
+                    MainForm.apiGetMem(addr, ref pretByte);
                     //apiGetMem(addr, ref pretByte);
 
                     Codes.CData[cnt + 1].addr = (misc.ByteArrayToLong(pretByte, 0, 4) + misc.ByteArrayToLong(val, 0, 4));
@@ -257,14 +257,14 @@ namespace NetCheatPS3
                     skip = size;
 
                     byte[] retByte = new byte[0x4];
-                    Form1.apiGetMem(addr, ref retByte);
+                    MainForm.apiGetMem(addr, ref retByte);
                     //apiGetMem(addr, ref retByte);
 
                     bool ret = false;
                     if (type == 'D')
-                        ret = misc.ArrayCompare(jval, retByte, new byte[1], 4, 0, 0, Form1.compEq);
+                        ret = misc.ArrayCompare(jval, retByte, new byte[1], 4, 0, 0, MainForm.compEq);
                     else if (type == 'E')
-                        ret = misc.ArrayCompare(jval, retByte, new byte[1], 4, 0, 0, Form1.compANEq);
+                        ret = misc.ArrayCompare(jval, retByte, new byte[1], 4, 0, 0, MainForm.compANEq);
 
                     if (ret == false)
                         break;
@@ -316,23 +316,23 @@ namespace NetCheatPS3
             //Remove comments
             var re = @"(@(?:""[^""]*"")+|""(?:[^""\n\\]+|\\.)*""|'(?:[^'\n\\]+|\\.)*')|//.*|/\*(?s:.*?)\*/";
             data = System.Text.RegularExpressions.Regex.Replace(data, re, "$1");
-            ParseCodeString(data, ref Form1.Codes[ind]);
+            ParseCodeString(data, ref MainForm.Codes[ind]);
         }
 
         /*
          * Processes codes in the string array splitList
          */
-        public static void ParseCodeString(string data, ref Form1.CodeDB ret)
+        public static void ParseCodeString(string data, ref MainForm.CodeDB ret)
         {
             int strcnt = 0, skip = 0, cnt = 0;
             splitList = data.Split('\n');
-            ret.CData = new Form1.CodeData[0];
+            ret.CData = new MainForm.CodeData[0];
 
             foreach (string s in splitList)
             {
 
                 int check = CheckForComment(splitList[strcnt]);
-                if (check == 1 || Form1.bComment == true || splitList[strcnt] == "")
+                if (check == 1 || MainForm.bComment == true || splitList[strcnt] == "")
                     goto SkipUpdateCD;
 
                 if (skip > 0)
@@ -381,11 +381,11 @@ namespace NetCheatPS3
 
                         //Skip comments and whatnot
                         check = CheckForComment(splitList[cnt + y]);
-                        if (check == 1 || Form1.bComment == true)
+                        if (check == 1 || MainForm.bComment == true)
                             y++;
                         else if (check == 2)
                         {
-                            while (Form1.bComment == true)
+                            while (MainForm.bComment == true)
                             {
                                 y++;
 
@@ -397,7 +397,7 @@ namespace NetCheatPS3
                         }
 
                         byte[] pretByte = new byte[0x4];
-                        Form1.apiGetMem(ret.CData[cnt].addr, ref pretByte);
+                        MainForm.apiGetMem(ret.CData[cnt].addr, ref pretByte);
 
                         if (splitList.Length <= (cnt + y))
                             break;
@@ -424,7 +424,7 @@ namespace NetCheatPS3
         /*
          * Processes joker code types (both D and E type)
          */
-        public static int ParseJokerD(string[] splitList, int cnt, ref Form1.CodeDB Code, int ind2)
+        public static int ParseJokerD(string[] splitList, int cnt, ref MainForm.CodeDB Code, int ind2)
         {
             String code = misc.sLeft(splitList[cnt], 19);
             String val = misc.sRight(code, 8);

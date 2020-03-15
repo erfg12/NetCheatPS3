@@ -12,7 +12,7 @@ namespace NetCheatPS3
     public partial class InputBox : Form
     {
         //Argument and return
-        public Form1.IBArg[] Arg;
+        public MainForm.IBArg[] Arg;
         public int ret = 0;
         public static Keys keyVal;
 
@@ -23,8 +23,8 @@ namespace NetCheatPS3
         public int fmTop = 0;
 
         //Form1's Colors
-        public Color fmBackColor = Form1.ncBackColor;
-        public Color fmForeColor = Form1.ncForeColor;
+        public Color fmBackColor = MainForm.ncBackColor;
+        public Color fmForeColor = MainForm.ncForeColor;
 
         //Text box array
         TextBox[] textBoxArg;

@@ -13,7 +13,7 @@ namespace NetCheatPS3
         /*
          * Appends res to a NetCheat text dump
          */
-        public static void AppendDump(Form1.CodeRes res, String filen)
+        public static void AppendDump(MainForm.CodeRes res, String filen)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(filen, true))
             {
@@ -25,9 +25,9 @@ namespace NetCheatPS3
          * Reads a single line in a NetCheat text dump int a CodeRes struct
          * Used only by the search results copy feature
          */
-        public static Form1.CodeRes ReadDump(String filen, int index, int align)
+        public static MainForm.CodeRes ReadDump(String filen, int index, int align)
         {
-            Form1.CodeRes ret = new Form1.CodeRes();
+            MainForm.CodeRes ret = new MainForm.CodeRes();
             string a = "";
             int i = 0;
 
@@ -70,12 +70,12 @@ namespace NetCheatPS3
         /*
          * Reads a NetCheat text dump into a CodeRes struct array
          */
-        public static Form1.CodeRes[] ReadDumpArray(String filen, long start, long stop, int align)
+        public static MainForm.CodeRes[] ReadDumpArray(String filen, long start, long stop, int align)
         {
             if (stop <= start) 
                 return null;
 
-            Form1.CodeRes[] ret = new Form1.CodeRes[stop - start + 1];
+            MainForm.CodeRes[] ret = new MainForm.CodeRes[stop - start + 1];
             String[] a = new String[stop - start + 1];
             int i = 0;
 
@@ -161,7 +161,7 @@ namespace NetCheatPS3
                         sw.WriteLine(line);
                     x++;
                 }
-                Form1.SchResCnt = (ulong)(x - cnt);
+                MainForm.SchResCnt = (ulong)(x - cnt);
             }
 
             File.Delete(filen);
@@ -171,9 +171,9 @@ namespace NetCheatPS3
         /*
          * Opens a code database
          */
-        public static Form1.CodeDB[] OpenFile(string file)
+        public static MainForm.CodeDB[] OpenFile(string file)
         {
-            Form1.CodeDB[] ret = null;
+            MainForm.CodeDB[] ret = null;
             int z = 1;
 
             if (file == "" || file == null)
@@ -193,7 +193,7 @@ namespace NetCheatPS3
                 y++;
             }
 
-            ret = new Form1.CodeDB[len];
+            ret = new MainForm.CodeDB[len];
 
             for (int x = 0; z < tempStr.Length; x++)
             {
@@ -214,16 +214,17 @@ namespace NetCheatPS3
         /*
          * Saves the code database save into file
          */
-        public static void SaveFile(string file, Form1.CodeDB save)
+        public static bool SaveFile(string file, MainForm.CodeDB save)
         {
             if (file == "" || file == null)
             {
-                System.Windows.Forms.MessageBox.Show("Error: File path invalid!");
-                return;
+                //System.Windows.Forms.MessageBox.Show("Error: File path invalid!");
+                return false;
             }
 
             string[] str = { "{", save.state.ToString(), save.name, save.codes, "}\n" };
-            System.IO.File.WriteAllLines(file, str);
+            File.WriteAllLines(file, str);
+            return true;
         }
 
         /*
@@ -241,12 +242,12 @@ namespace NetCheatPS3
                 File.Delete(file);
             using (System.IO.StreamWriter fd = new System.IO.StreamWriter(file, true))
             {
-                for (int x = 0; x <= Form1.CodesCount; x++)
+                for (int x = 0; x <= MainForm.CodesCount; x++)
                 {
                     fd.WriteLine("{");
-                    fd.WriteLine(Form1.Codes[x].state.ToString());
-                    fd.WriteLine(Form1.Codes[x].name);
-                    fd.WriteLine(Form1.Codes[x].codes);
+                    fd.WriteLine(MainForm.Codes[x].state.ToString());
+                    fd.WriteLine(MainForm.Codes[x].name);
+                    fd.WriteLine(MainForm.Codes[x].codes);
                     fd.WriteLine("}");
                 }
             }

@@ -171,51 +171,51 @@ namespace NetCheatPS3
         {
             switch (mode)
             {
-                case Form1.compEq:
+                case MainForm.compEq:
                     if (intB == intA)
                         return true;
                     break;
-                case Form1.compNEq:
+                case MainForm.compNEq:
                     if (intB != intA)
                         return true;
                     break;
-                case Form1.compLT:
+                case MainForm.compLT:
                     if (intB < intA)
                         return true;
                     break;
-                case Form1.compLTE:
+                case MainForm.compLTE:
                     if (intB <= intA)
                         return true;
                     break;
-                case Form1.compGT:
+                case MainForm.compGT:
                     if (intB > intA)
                         return true;
                     break;
-                case Form1.compGTE:
+                case MainForm.compGTE:
                     if (intB >= intA)
                         return true;
                     break;
-                case Form1.compVBet:
+                case MainForm.compVBet:
                     if ((intB >= intA) && (intB <= intC))
                         return true;
                     break;
-                case Form1.compINC:
+                case MainForm.compINC:
                     if ((intA + intC) == intB)
                         return true;
                     break;
-                case Form1.compDEC:
+                case MainForm.compDEC:
                     if ((intA - intC) == intB)
                         return true;
                     break;
-                case Form1.compChg:
+                case MainForm.compChg:
                     if (intC != intB)
                         return true;
                     break;
-                case Form1.compUChg:
+                case MainForm.compUChg:
                     if (intC == intB)
                         return true;
                     break;
-                case Form1.compANEq:
+                case MainForm.compANEq:
                     if ((intB & intA) == intA)
                         return true;
                     break;
@@ -238,22 +238,22 @@ namespace NetCheatPS3
 
             switch (mode)
             {
-                case Form1.compEq:
+                case MainForm.compEq:
                     if (isBAEqual(a, b))
                         return true;
                     break;
-                case Form1.compNEq:
+                case MainForm.compNEq:
                     if (!isBAEqual(a, b))
                         return true;
                     break;
-                case Form1.compLT:
+                case MainForm.compLT:
                     for (cnt = 0; cnt < a.Length; cnt++)
                         if (b[cnt] < a[cnt])
                             return true;
                         else if (b[cnt] != a[cnt])
                             return false;
                     break;
-                case Form1.compLTE:
+                case MainForm.compLTE:
                     for (cnt = 0; cnt < a.Length; cnt++)
                         if (b[cnt] < a[cnt])
                             return true;
@@ -262,14 +262,14 @@ namespace NetCheatPS3
                         else if (b[cnt] != a[cnt])
                             return false;
                     break;
-                case Form1.compGT:
+                case MainForm.compGT:
                     for (cnt = 0; cnt < a.Length; cnt++)
                         if (b[cnt] > a[cnt])
                             return true;
                         else if (b[cnt] != a[cnt])
                             return false;
                     break;
-                case Form1.compGTE:
+                case MainForm.compGTE:
                     for (cnt = 0; cnt < a.Length; cnt++)
                         if (b[cnt] > a[cnt])
                             return true;
@@ -278,16 +278,16 @@ namespace NetCheatPS3
                         else if (b[cnt] != a[cnt])
                             return false;
                     break;
-                case Form1.compVBet:
+                case MainForm.compVBet:
                     if (c == null || c.Length < a.Length)
                         return false;
 
                     //if ((intB >= intA) && (intB <= intC))
-                    if (ArrayCompare(a, b, null, Form1.compGTE) && ArrayCompare(c, b, null, Form1.compLTE))
+                    if (ArrayCompare(a, b, null, MainForm.compGTE) && ArrayCompare(c, b, null, MainForm.compLTE))
                         return true;
 
                     break;
-                case Form1.compINC:
+                case MainForm.compINC:
                     if (c == null || c.Length < a.Length)
                         return false;
 
@@ -297,7 +297,7 @@ namespace NetCheatPS3
                     if (isBAEqual(a, b))
                         return true;
                     break;
-                case Form1.compDEC:
+                case MainForm.compDEC:
                     if (c == null || c.Length < a.Length)
                         return false;
 
@@ -307,21 +307,21 @@ namespace NetCheatPS3
                     if (isBAEqual(a, b))
                         return true;
                     break;
-                case Form1.compChg:
+                case MainForm.compChg:
                     if (c == null || b.Length < c.Length)
                         return false;
 
                     if (!isBAEqual(b, c))
                         return true;
                     break;
-                case Form1.compUChg:
+                case MainForm.compUChg:
                     if (c == null || b.Length < c.Length)
                         return false;
 
                     if (isBAEqual(b, c))
                         return true;
                     break;
-                case Form1.compANEq:
+                case MainForm.compANEq:
                     for (cnt = 0; cnt < a.Length; cnt++)
                         b[cnt] &= a[cnt];
 
@@ -523,9 +523,9 @@ namespace NetCheatPS3
         /*
          * Converts ret into a list result based on align
          */
-        public static Form1.ListRes GetlvVals(int align, byte[] ret, int off)
+        public static MainForm.ListRes GetlvVals(int align, byte[] ret, int off)
         {
-            Form1.ListRes a = new Form1.ListRes();
+            MainForm.ListRes a = new MainForm.ListRes();
             ulong tempInt = 0;
             byte[] temp = null;
             if (align > 0)

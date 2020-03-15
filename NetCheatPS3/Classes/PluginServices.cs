@@ -18,19 +18,19 @@ namespace NetCheatPS3
         /* Set Memory */
         public void SetMemory(ulong addr, byte[] val)
         {
-            Form1.apiSetMem(addr, val);
+            MainForm.apiSetMem(addr, val);
         }
 
         /* Get Memory */
         public byte[] GetMemory(ulong addr, int size)
         {
             byte[] ret = new byte[size];
-            Form1.apiGetMem(addr, ref ret);
+            MainForm.apiGetMem(addr, ref ret);
             return ret;
         }
         public void GetMemory(ulong addr, ref byte[] ret)
         {
-            Form1.apiGetMem(addr, ref ret);
+            MainForm.apiGetMem(addr, ref ret);
         }
 
         /* Byte Array to ulong */
@@ -109,10 +109,10 @@ namespace NetCheatPS3
         /* Returns the state of the main forms connection */
         public int ConnectionState()
         {
-            if (!Form1.connected)
+            if (!MainForm.connected)
                 return 0;
 
-            return (Form1.connected && Form1.processIDs != null) ? 2 : 1;
+            return (MainForm.connected && MainForm.processIDs != null) ? 2 : 1;
         }
 
 		/// <summary>
